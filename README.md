@@ -3,6 +3,7 @@ pysect
 
 _Security related scripts and tools, implemented for fun_
 
+This projects aims to help me have fun, creating a demand for myself practing and refreshing some networking concepts. For now - and probably a long time - it will not be handled as a serios project: do not expect continuation.
 
 
 ### Backlog - Ideas
