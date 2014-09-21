@@ -6,7 +6,9 @@ _Security related scripts and tools, implemented for fun_
 This projects aims to help me have fun, creating a demand for myself practing and refreshing some networking concepts. For now - and probably a long time - it will not be handled as a serios project: do not expect continuation.
 
 
-## Proxy
+## Summary
+
+### Proxy
 
 The `primitive_proxy.py` script is a simple flask server that uses the full _url_ for each request it receives to make a request to the real server. It wait for the answer, later on returning it to whoever made the request for it.
 
