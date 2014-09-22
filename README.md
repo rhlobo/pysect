@@ -3,10 +3,14 @@ pysect
 
 _Security related scripts and tools, implemented for fun_
 
-This projects aims to help me have fun, creating a demand for myself practing and refreshing some networking concepts. For now - and probably for a long time - it will not be handled as a serios project: do not expect continuation.
+This projects aims to help me have fun, creating a demand for myself to practice and refresh some networking concepts. For now - and probably for a long time - it will not be handled as a serios project: do not expect periodic updates...
 
 
 ### Summary
+
+#### MAC Flooding
+
+    To be documented.
 
 #### Proxy
 
