@@ -1,2 +1,4 @@
 Flask>=0.10.1
 requests>=2.4.1
+scapy==2.2.0-dev
+# pip install hg+http://bb.secdev.org/scapy
