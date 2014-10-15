@@ -8,9 +8,13 @@ This projects aims to help me have fun, creating a demand for myself to practice
 
 ### Summary
 
+#### MAC Discovery and Disconnection
+
+Sniffs packets and prints out distinct MAC Addresses found. Provides an option to disconnect each client found from the network (de-auth).
+
 #### MAC Flooding
 
-    To be documented.
+MAC flooding is a technique employed to compromise the security of network switches, possibly enabling the uso of tools such as ARP spoofing and packet analyzers. The outcome of this attack may vary across implementations, however the desired effect is to force legitimate MAC addresses out of the MAC address table, causing significant quantities of incoming frames to be flooded out on all ports.
 
 #### Proxy
 
