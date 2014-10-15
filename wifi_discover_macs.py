@@ -16,14 +16,11 @@ import functools
 from scapy.all import *
 
 
-def sniffmgmt(post_process, packet):
-    clients = set()
-
+def sniffmgmt(post_process, packet, clients=None):
     if packet.haslayer(Dot11):
         if packet.type == 0:
-
-            if packet.addr2 not in clients:
-                mac_address = packet.addr2
+            mac_address = packet.addr2
+            if not clients or mac_address not in clients:
                 clients.add(mac_address)
                 post_process(packet)
 
@@ -32,7 +29,7 @@ def discover(interface='mon0'):
     def _print_mac(packet):
         print packet.addr2
 
-    fn = functools.partial(sniffmgmt, _print_mac)
+    fn = functools.partial(sniffmgmt, _print_mac, clients=set())
     sniff(iface=interface, prn=fn)
 
 
