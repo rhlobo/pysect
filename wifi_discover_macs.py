@@ -11,6 +11,8 @@ You need to have your wireless card in monitor mode:
     $ airmon-ng start wlan0
 '''
 
+import utils
+
 import argh
 import functools
 from scapy.all import *
@@ -46,4 +48,5 @@ def disconnect(interface='mon0'):
 
 
 if __name__ == '__main__':
+    utils.config_graceful_exit()
     argh.dispatch_commands([discover, disconnect])
