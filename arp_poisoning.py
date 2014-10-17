@@ -8,6 +8,7 @@ import time
 import utils
 import signal
 import logging
+import itertools
 from scapy.all import *
 
 
@@ -74,6 +75,12 @@ def display():
         print
 
 
+def flush(ip=None):
+    entries = [(ip, None)] if ip else itertools.chain(*_load_mac_table().values())
+    for ip, _ in entries:
+        sh.arp('-d', ip)
+
+
 if __name__ == '__main__':
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-    argh.dispatch_commands([poison, verify, monitor, display])
+    argh.dispatch_commands([poison, flush, verify, monitor, display])
