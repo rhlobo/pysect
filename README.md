@@ -3,10 +3,18 @@ pysect
 
 _Security related scripts and tools, implemented for fun_
 
-This projects aims to help me have fun, creating a demand for myself practing and refreshing some networking concepts. For now - and probably for a long time - it will not be handled as a serios project: do not expect continuation.
+This projects aims to help me have fun, creating a demand for myself to practice and refresh some networking concepts. For now - and probably for a long time - it will not be handled as a serios project: do not expect periodic updates...
 
 
 ### Summary
+
+#### MAC Discovery and Disconnection
+
+Sniffs packets and prints out distinct MAC Addresses found. Provides an option to disconnect each client found from the network (de-auth).
+
+#### MAC Flooding
+
+MAC flooding is a technique employed to compromise the security of network switches, possibly enabling the uso of tools such as ARP spoofing and packet analyzers. The outcome of this attack may vary across implementations, however the desired effect is to force legitimate MAC addresses out of the MAC address table, causing significant quantities of incoming frames to be flooded out on all ports.
 
 #### Proxy
 

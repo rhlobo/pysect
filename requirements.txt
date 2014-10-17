@@ -1,4 +1,4 @@
 argh
 Flask
-scapy
 requests
+hg+http://bb.secdev.org/scapy
