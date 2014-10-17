@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 
+import sh
+import re
 import argh
 import time
 import utils
@@ -11,6 +13,23 @@ from scapy.all import *
 
 def _arp_registered_MAC(ip, interface=Ether):
     return srp(ARP(pdst=ip), timeout=5, retry=3)[0][1][interface].src
+
+
+def _load_mac_table():
+    pattern = re.compile(r' \((\d+\.\d+\.\d+.\d+)\) at ([0-9a-f:]{17}) \[[\w]+\] on (\w+)')
+
+    results = {}
+    for line in sh.arp('-a'):
+        match = pattern.search(line)
+        if not match:
+            continue
+
+        ip, mac, interface = match.group(1), match.group(2), match.group(3)
+        if interface not in results:
+            results[interface] = list()
+        results[interface].append((ip, mac))
+
+    return results
 
 
 def poison(routerIP, victimIP, attackerIP, interface='eth0'):
@@ -48,7 +67,11 @@ def monitor():
 
 
 def display():
-    pass
+    for interface, entries in _load_mac_table().items():
+        print 'Interface %s (%i items)' % (interface, len(entries))
+        for ip, mac in sorted(entries):
+            print '\t %s \t %s' % (ip, mac)
+        print
 
 
 if __name__ == '__main__':
