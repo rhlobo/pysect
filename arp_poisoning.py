@@ -39,6 +39,18 @@ def poison(routerIP, victimIP, attackerIP, interface='eth0'):
             time.sleep(2)
 
 
+def verify():
+    pass
+
+
+def monitor():
+    pass
+
+
+def display():
+    pass
+
+
 if __name__ == '__main__':
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-    argh.dispatch_commands([poison])
+    argh.dispatch_commands([poison, verify, monitor, display])
