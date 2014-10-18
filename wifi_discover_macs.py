@@ -15,6 +15,8 @@ import argh
 import functools
 from scapy.all import *
 
+import utils as util
+
 
 def sniffmgmt(post_process, packet, clients=None):
     if packet.haslayer(Dot11):
@@ -46,4 +48,5 @@ def disconnect(interface='mon0'):
 
 
 if __name__ == '__main__':
+    util.assure_root()
     argh.dispatch_commands([discover, disconnect])

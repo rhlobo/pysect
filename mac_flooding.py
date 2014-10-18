@@ -3,6 +3,8 @@
 
 from scapy.all import *
 
+import utils as util
+
 
 def run():
     while True:
@@ -15,4 +17,5 @@ def run():
 
 
 if __name__ == '__main__':
+    util.assure_root()
     run()
