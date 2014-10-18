@@ -13,7 +13,7 @@ This projects aims to help me have fun, creating a demand for myself to practice
 Sniffs packets and prints out every distinct MAC Addresses found. Provides an option to disconnect each client found from the network (de-auth).
 
 Usage:
-````shell
+````bash
 $ sudo ./wifi_discover_macs.py -h
 usage: wifi_discover_macs.py [-h] {discover,disconnect} ...
 
@@ -27,7 +27,7 @@ optional arguments:
 ````
 
 Examples:
-````shell
+````bash
 $ sudo ./wifi_discover_macs.py discover
 ````
 
