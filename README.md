@@ -10,7 +10,26 @@ This projects aims to help me have fun, creating a demand for myself to practice
 
 #### MAC Discovery and Disconnection
 
-Sniffs packets and prints out distinct MAC Addresses found. Provides an option to disconnect each client found from the network (de-auth).
+Sniffs packets and prints out every distinct MAC Addresses found. Provides an option to disconnect each client found from the network (de-auth).
+
+Usage:
+````shell
+$ sudo ./wifi_discover_macs.py -h
+usage: wifi_discover_macs.py [-h] {discover,disconnect} ...
+
+positional arguments:
+  {discover,disconnect}
+    discover
+    disconnect
+
+optional arguments:
+  -h, --help            show this help message and exit
+````
+
+Examples:
+````shell
+$ sudo ./wifi_discover_macs.py discover
+````
 
 #### MAC Flooding
 

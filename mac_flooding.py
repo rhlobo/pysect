@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import utils
 
 from scapy.all import *
+
+import utils
 
 
 def run():
@@ -16,5 +17,6 @@ def run():
 
 
 if __name__ == '__main__':
+    utils.assure_root()
     utils.config_graceful_exit()
     run()
