@@ -3,6 +3,15 @@
 
 import os
 import sys
+import signal
+
+
+def config_graceful_exit():
+    def signal_handler(signal, frame):
+        print 'Exiting...'
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
 
 
 def assure_root():

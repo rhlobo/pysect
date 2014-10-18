@@ -3,7 +3,7 @@
 
 from scapy.all import *
 
-import utils as util
+import utils
 
 
 def run():
@@ -17,5 +17,6 @@ def run():
 
 
 if __name__ == '__main__':
-    util.assure_root()
+    utils.assure_root()
+    utils.config_graceful_exit()
     run()

