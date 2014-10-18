@@ -31,13 +31,11 @@ optional arguments:
 ````
 
 - __poision__: sends fake ARP messages, allowing ARP Spoofing attacks
-- __flush__: cleans ARP associations on the local host ARP table, able to clean the whole table, every association in an interface, or an specific IP association
-- __monitor__: monitors ARP changes, looking for ARP poisoning attacks
+- __flush__: cleans ARP associations on the local host ARP table. It is able to clean the whole table, every association in an interface, or an specific IP association
+- __monitor__: monitors ARP changes, alerting about potential ARP poisoning attacks
 - __display__: prints out current ARP table associations
 
-(Later on another options may be added: __prevention__;)
-
-EACH OF THESE COMMANDS HAVE OPTIONS THAT CAN BE EXPLORED USING `-h`
+EACH OF THESE COMMANDS HAVE OPTIONS THAT CAN BE EXPLORED USING `-h` or `--help`
 
 #### MAC Discovery and Disconnection
 
